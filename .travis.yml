@@ -1,0 +1,43 @@
+language: go
+
+go:
+  - 1.9
+  - tip
+
+env:
+  - GO_BUILD_PLATFORMS="linux windows darwin"
+  - GO_BUILD_ARCHS="amd64"
+
+cache:
+  directories:
+    - $GOPATH/pkg
+    - $GOPATH/src
+
+before_install:
+  - go get github.com/golang/dep/cmd/dep
+  - go get github.com/alecthomas/gometalinter
+  - gometalinter --install
+
+install:
+  - dep ensure
+
+before_script:
+  - gometalinter
+  - go test -v -cover
+
+script:
+  - ./dist.sh
+
+deploy:
+  provider: releases
+  api_key: $GITHUB_DEPLOY_KEY
+  skip_cleanup: true
+  file:
+    - dist/namedns-linux-amd64
+    - dist/namedns-linux-amd64.sha256sum
+    - dist/namedns-windows-amd64.exe
+    - dist/namedns-windows-amd64.exe.sha256sum
+    - dist/namedns-darwin-amd64
+    - dist/namedns-darwin-amd64.sha256sum
+  on:
+    tags: true
