@@ -1,5 +1,7 @@
 # namedns
 
+[![Build Status](https://travis-ci.org/aelindeman/namedns.svg?branch=master)](https://travis-ci.org/aelindeman/namedns)
+
 A command-line utility to manipulate Name.com DNS records
 
 ## Install
