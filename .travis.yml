@@ -5,8 +5,9 @@ go:
   - tip
 
 env:
-  - GO_BUILD_PLATFORMS="linux windows darwin"
-  - GO_BUILD_ARCHS="amd64"
+  global:
+    - GO_BUILD_PLATFORMS="linux windows darwin"
+    - GO_BUILD_ARCHS="amd64"
 
 cache:
   directories:
