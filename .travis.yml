@@ -1,22 +1,12 @@
 language: go
 
 go:
-  - 1.9
-  - tip
-
-env:
-  global:
-    - GO_BUILD_PLATFORMS="linux windows darwin"
-    - GO_BUILD_ARCHS="amd64"
-
-cache:
-  directories:
-    - $GOPATH/pkg
-    - $GOPATH/src
+  - 1.x
 
 before_install:
   - go get github.com/golang/dep/cmd/dep
   - go get github.com/alecthomas/gometalinter
+  - go get github.com/mitchellh/gox
   - gometalinter --install
 
 install:
@@ -27,18 +17,25 @@ before_script:
   - go test -v -cover
 
 script:
-  - ./dist.sh
+  - gox -osarch="linux/arm linux/arm64 linux/386 linux/amd64 darwin/amd64 windows/amd64" -ldflags "-X 'github.com/aelindeman/namedns/cmd.Version=${TRAVIS_TAG}+${TRAVIS_COMMIT}'"
+  - for n in namedns_*; do shasum -a 256 $n > $n.sha256sum; done
 
 deploy:
   provider: releases
   api_key: $GITHUB_DEPLOY_KEY
   skip_cleanup: true
   file:
-    - dist/namedns-linux-amd64
-    - dist/namedns-linux-amd64.sha256sum
-    - dist/namedns-windows-amd64.exe
-    - dist/namedns-windows-amd64.exe.sha256sum
-    - dist/namedns-darwin-amd64
-    - dist/namedns-darwin-amd64.sha256sum
+    - namedns_linux_arm
+    - namedns_linux_arm.sha256sum
+    - namedns_linux_arm64
+    - namedns_linux_arm64.sha256sum
+    - namedns_linux_386
+    - namedns_linux_386.sha256sum
+    - namedns_linux_amd64
+    - namedns_linux_amd64.sha256sum
+    - namedns_windows_amd64.exe
+    - namedns_windows_amd64.exe.sha256sum
+    - namedns_darwin_amd64
+    - namedns_darwin_amd64.sha256sum
   on:
     tags: true
