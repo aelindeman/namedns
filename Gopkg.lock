@@ -36,6 +36,12 @@
   version = "v1.0"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/kyoh86/xdg"
+  packages = ["."]
+  revision = "fcdc7e7a466bd4a15ee12d462a6582ff35f90e81"
+
+[[projects]]
   name = "github.com/magiconair/properties"
   packages = ["."]
   revision = "d419a98cdbed11a922bf76f257b7c4be79b50e73"
@@ -141,6 +147,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "b53cadebcf89d86de74c91364ea2caa8581ab64079113790ac450fa4ae7fae9a"
+  inputs-digest = "f35b9a4c114b6a5bbf0021e211deb97c94f9d7389c326c07779c74dc9b9074d9"
   solver-name = "gps-cdcl"
   solver-version = 1

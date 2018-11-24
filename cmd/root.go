@@ -3,8 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/aelindeman/goname"
+	"github.com/kyoh86/xdg"
 	homedir "github.com/mitchellh/go-homedir"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -66,12 +68,12 @@ func GetClient() *goname.GoName {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "path to config file (default: $HOME/.namedns.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", `Path to config file (default "$XDG_CONFIG_HOME/namedns/.namedns.yaml")`)
 	rootCmd.PersistentFlags().StringP("username", "u", "", "API username")
 	rootCmd.PersistentFlags().StringP("api-key", "k", "", "API key")
+	viper.SetEnvPrefix("namedns")
 	viper.BindPFlag("username", rootCmd.PersistentFlags().Lookup("username"))
 	viper.BindPFlag("api-key", rootCmd.PersistentFlags().Lookup("api-key"))
-	viper.BindPFlag("staging", rootCmd.PersistentFlags().Lookup("staging"))
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -80,21 +82,35 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(cfgFile)
 	} else {
-		// Find home directory.
-		home, err := homedir.Dir()
-		if err != nil {
-			log.WithError(err).Fatal("could not find home directory")
+		// Find XDG config directories.
+		for _, xdgConfigDir := range xdg.AllConfigDirs() {
+			viper.AddConfigPath(strings.Join([]string{xdgConfigDir, "namedns"}, "/"))
 		}
 
-		// Search config in home directory with name ".namedns" (without extension).
-		viper.AddConfigPath(home)
+		// Find home directory.
+		home, homeErr := homedir.Dir()
+		if homeErr != nil {
+			log.WithError(homeErr).Warning("could not find home directory")
+		} else {
+			viper.AddConfigPath(home)
+		}
+
+		// Look for one in the current directory.
+		wd, wdErr := os.Getwd()
+		if wdErr != nil {
+			log.WithError(wdErr).Warning("could not find current directory")
+		} else {
+			viper.AddConfigPath(wd)
+		}
+
+		// Search config with name ".namedns" (without extension).
 		viper.SetConfigName(".namedns")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
+	if configReadErr := viper.ReadInConfig(); configReadErr == nil {
 		log.WithField("file", viper.ConfigFileUsed()).Debug("using config from file")
 	}
 }
