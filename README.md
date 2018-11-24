@@ -1,6 +1,8 @@
 # namedns
 
 [![Build Status](https://travis-ci.org/aelindeman/namedns.svg?branch=master)](https://travis-ci.org/aelindeman/namedns)
+[![Maintainability](https://api.codeclimate.com/v1/badges/02357c367b6f044ad810/maintainability)](https://codeclimate.com/github/aelindeman/namedns/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/02357c367b6f044ad810/test_coverage)](https://codeclimate.com/github/aelindeman/namedns/test_coverage)
 
 A command-line utility to manipulate Name.com DNS records
 
