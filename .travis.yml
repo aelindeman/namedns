@@ -3,22 +3,34 @@ language: go
 go:
   - 1.x
 
+cache:
+  directories:
+    - $GOPATH/pkg
+    - $GOPATH/src
+
 before_install:
   - go get github.com/golang/dep/cmd/dep
   - go get github.com/alecthomas/gometalinter
   - go get github.com/mitchellh/gox
   - gometalinter --install
+  - >-
+    curl -Lo cc-test-reporter https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 &&
+    chmod +x cc-test-reporter &&
+    ./cc-test-reporter before-build
 
 install:
   - dep ensure
 
 before_script:
   - gometalinter
-  - go test -v -cover
+  - go test -v -coverprofile c.out
 
 script:
-  - gox -osarch="linux/arm linux/arm64 linux/386 linux/amd64 darwin/amd64 windows/amd64" -ldflags "-X 'github.com/aelindeman/namedns/cmd.Version=${TRAVIS_TAG}+${TRAVIS_COMMIT}'"
+  - gox -osarch="linux/arm linux/arm64 linux/mips64 linux/386 linux/amd64 darwin/amd64 windows/amd64" -ldflags "-X 'github.com/aelindeman/namedns/cmd.Version=${TRAVIS_TAG}+${TRAVIS_COMMIT}'"
   - for n in namedns_*; do shasum -a 256 $n > $n.sha256sum; done
+
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
 deploy:
   provider: releases
@@ -29,6 +41,8 @@ deploy:
     - namedns_linux_arm.sha256sum
     - namedns_linux_arm64
     - namedns_linux_arm64.sha256sum
+    - namedns_linux_mips64
+    - namedns_linux_mips64.sha256sum
     - namedns_linux_386
     - namedns_linux_386.sha256sum
     - namedns_linux_amd64
@@ -37,5 +51,5 @@ deploy:
     - namedns_windows_amd64.exe.sha256sum
     - namedns_darwin_amd64
     - namedns_darwin_amd64.sha256sum
-  on:
+  "on":
     tags: true
