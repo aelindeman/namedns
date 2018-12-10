@@ -12,7 +12,7 @@ Grab the latest binary from the [releases page](https://github.com/aelindeman/na
 
 ## Usage
 
-A username and API key are required.
+A username and API key to the Name.com API are required.
 
 ### Getting an API key
 
@@ -27,10 +27,12 @@ You can get an API key by going to <https://name.com/reseller/apply> and filling
 
 #### Optional global flags
 
-| Key      | Flag             | Description                               | Default value  |
-|:---------|:-----------------|:------------------------------------------|:---------------|
-|          | `--config`       | Path to a configuration file              | see list below |
-| `output` | `-o`, `--output` | Output format: `json`, `table`, or `yaml` | `table`        |
+| Key       | Flag              | Description                               | Default value           |
+|:----------|:------------------|:------------------------------------------|:------------------------|
+| `api-url` | `--api-url`       | Name.com base API URL                     | `goname.NameAPIBaseURL` |
+|           | `--config`        | Path to a configuration file              | see list below          |
+| `output`  | `-o`, `--output`  | Output format: `json`, `table`, or `yaml` | `table`                 |
+| `verbose` | `-v`, `--verbose` | Display debugging output                  | `false`                 |
 
 ## Configuration
 

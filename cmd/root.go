@@ -22,6 +22,12 @@ var (
 var rootCmd = &cobra.Command{
 	Use:   "namedns",
 	Short: "A command-line utility to manipulate Name.com DNS records",
+	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		if viper.GetBool("verbose") {
+			log.SetLevel(log.DebugLevel)
+		}
+		ValidateGlobalConfig()
+	},
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -56,6 +62,7 @@ func GetClient() *goname.GoName {
 	}
 
 	client := goname.New(viper.GetString("username"), viper.GetString("api-key"))
+	client.BaseURL = viper.GetString("api-url")
 
 	loginErr := client.Login()
 	if loginErr != nil {
@@ -71,9 +78,13 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", `Path to config file (default "$XDG_CONFIG_HOME/namedns/.namedns.yaml")`)
 	rootCmd.PersistentFlags().StringP("username", "u", "", "API username")
 	rootCmd.PersistentFlags().StringP("api-key", "k", "", "API key")
+	rootCmd.PersistentFlags().StringP("api-url", "", goname.NameAPIBaseURL, "API base URL")
+	rootCmd.PersistentFlags().BoolP("verbose", "v", false, "Display debugging output")
 	viper.SetEnvPrefix("namedns")
 	viper.BindPFlag("username", rootCmd.PersistentFlags().Lookup("username"))
 	viper.BindPFlag("api-key", rootCmd.PersistentFlags().Lookup("api-key"))
+	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
+	viper.BindPFlag("verbose", rootCmd.PersistentFlags().Lookup("verbose"))
 }
 
 // initConfig reads in config file and ENV variables if set.

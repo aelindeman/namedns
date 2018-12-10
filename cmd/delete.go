@@ -16,7 +16,6 @@ var deleteCmd = &cobra.Command{
 
 func init() {
   rootCmd.AddCommand(deleteCmd)
-  ValidateGlobalConfig()
 }
 
 func unsetDNSRecord(cmd *cobra.Command, args []string) {

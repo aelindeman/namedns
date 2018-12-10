@@ -35,7 +35,6 @@ var validDNSRecordTypes = []string{
 func init() {
 	rootCmd.AddCommand(createCmd)
 	createCmd.PersistentFlags().IntVar(&setTTL, "ttl", 3600, "time-to-live")
-	ValidateGlobalConfig()
 }
 
 func createDNSRecord(cmd *cobra.Command, args []string) {

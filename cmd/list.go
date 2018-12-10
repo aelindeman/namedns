@@ -22,7 +22,6 @@ var listOutputFormat string
 func init() {
 	rootCmd.AddCommand(listCmd)
 	listCmd.PersistentFlags().StringVarP(&listOutputFormat, "format", "f", "", "output format")
-	ValidateGlobalConfig()
 }
 
 func listDNSRecords(cmd *cobra.Command, args []string) {
@@ -58,7 +57,7 @@ func listDNSRecords(cmd *cobra.Command, args []string) {
 
 func parseRequestedDomains(args []string) (domains []string) {
 	if len(args) > 0 {
-		log.Debug("using domain list from args")
+		log.WithField("args", args).Debug("using domain list from args")
 		domains = args
 	} else {
 		log.Debug("querying account for domain list")
